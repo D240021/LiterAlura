@@ -19,5 +19,7 @@ public interface IPrincipal {
 
     public void obtenerAutoresVivosPorAnio();
 
+    public void obtenerLibrosPorIdioma();
+
 
 }

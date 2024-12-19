@@ -13,6 +13,7 @@ public interface ILibro {
 
     public boolean registrarNuevoLibro(Libro libro);
 
+    public List<Libro> obtenerLibrosPorIdioma(String idioma);
 
 
 

@@ -51,7 +51,7 @@ public class LibroDA implements ILibro {
         return this.libroRepository.findAll();
     }
 
-    @Transactional 
+    @Transactional
     @Override
     public boolean registrarNuevoLibro(Libro libro) {
         try {
@@ -74,6 +74,10 @@ public class LibroDA implements ILibro {
         }
     }
 
+    @Override
+    public List<Libro> obtenerLibrosPorIdioma(String idioma) {
+        return this.libroRepository.findLibroByIdiomas(idioma);
+    }
 
 
 }

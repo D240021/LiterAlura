@@ -99,6 +99,27 @@ public class Principal implements IPrincipal {
         autores.forEach(System.out::println);
     }
 
+    @Override
+    public void obtenerLibrosPorIdioma() {
+        System.out.println("Seleccione el idioma del libro a buscar: \n" +
+                "1.Español\n" +
+                "2.Inglés\n" +
+                "3.Francés");
+
+        int opcion = this.scanner.nextInt();
+
+        String opcionProcesada = this.procesarOpcionesIdiomas(opcion);
+
+        List<Libro> libros = this.libroDA.obtenerLibrosPorIdioma(opcionProcesada);
+
+        if(libros.isEmpty()){
+            System.out.println("No existen libros registrados en el idioma seleccionado");
+            return;
+        }
+
+        libros.forEach(System.out::println);
+    }
+
     private void procesarOpciones(int opcion) {
         switch (opcion) {
             case 1:
@@ -116,7 +137,20 @@ public class Principal implements IPrincipal {
             case 4:
                 this.obtenerAutoresVivosPorAnio();
                 break;
+            case 5:
+                this.obtenerLibrosPorIdioma();
+                break;
         }
+    }
+
+    private String procesarOpcionesIdiomas(int opcion){
+        switch (opcion){
+            case 1:
+                return "es";
+            case 2:
+                return "en";
+        }
+        return "";
     }
 
     public Libro buscarLibroPorNombre() {

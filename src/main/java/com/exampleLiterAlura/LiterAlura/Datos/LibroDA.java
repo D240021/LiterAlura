@@ -39,7 +39,20 @@ public class LibroDA implements ILibro {
             String nombreCodificado = URLEncoder.encode(nombre, StandardCharsets.UTF_8);
             String json = this.consumoGutendex.obtenerLibroPorNombre(nombreCodificado);
             RespuestaLibroGutendex respuesta = this.objectMapper.readValue(json, RespuestaLibroGutendex.class);
-            return respuesta.getResults().get(0);
+            return respuesta.getResults().isEmpty() ? null : respuesta.getResults().get(0);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
+    public List<Libro> obtenerLibrosPorIdioma(String idioma){
+        try {
+            String idiomaCodificado = URLEncoder.encode(idioma, StandardCharsets.UTF_8);
+            String json = this.consumoGutendex.obtenerLibrosPorIdioma(idiomaCodificado);
+            RespuestaLibroGutendex respuesta = this.objectMapper.readValue(json, RespuestaLibroGutendex.class);
+            return respuesta.getResults();
         } catch (JsonProcessingException e) {
             e.printStackTrace();
             return null;
@@ -55,18 +68,24 @@ public class LibroDA implements ILibro {
     @Override
     public boolean registrarNuevoLibro(Libro libro) {
         try {
-            // Persistir los autores si no están en la base de datos
-            if (libro.getAutores() != null && !libro.getAutores().isEmpty()) {
-                for (Autor autor : libro.getAutores()) {
-                    // Si el autor aún no está en la base de datos, lo guardamos
-                    if (autor.getId() == null) {
-                        autorRepositorio.save(autor);
-                    }
-                }
-            }
 
-            // Guardar el libro (esto guardará el libro y sus autores si no están en la base de datos)
-            libroRepository.save(libro); //El problema se encuentra en esta línea
+            if(this.libroRepository.existsByNombre(libro.getNombre()))
+                return false;
+
+            Libro nuevoLibro = new Libro(libro.getNombre(),
+                     libro.getIdiomas(), libro.getNumeroDescargas());
+
+            List<Autor> autores = libro.getAutores();
+
+            autores.stream()
+                     .forEach( autor -> {
+
+                                if(!this.autorRepositorio.existsByNombre(autor.getNombre()))
+                                    nuevoLibro.setUnicoAutor(autor);
+                             }
+                     );
+
+            libroRepository.save(nuevoLibro);
             return true;
         } catch (Exception e) {
             System.out.println("Error: " + e);
@@ -74,10 +93,8 @@ public class LibroDA implements ILibro {
         }
     }
 
-    @Override
-    public List<Libro> obtenerLibrosPorIdioma(String idioma) {
-        return this.libroRepository.findLibroByIdiomas(idioma);
-    }
+
+
 
 
 }

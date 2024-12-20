@@ -30,6 +30,9 @@ public class Autor {
     private List<Libro> libros = new ArrayList<>();
     ;
 
+    @Version
+    private Integer version = 0;
+
     //Getters, setters y toString abajo
 
     public Integer getId() {
@@ -70,6 +73,10 @@ public class Autor {
 
     public void setLibros(List<Libro> libros) {
         this.libros = libros;
+    }
+
+    public void setUnicoLibro(Libro libro){
+        this.libros.add(libro);
     }
 
     @Override

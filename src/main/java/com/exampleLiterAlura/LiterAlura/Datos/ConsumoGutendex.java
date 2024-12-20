@@ -63,4 +63,23 @@ public class ConsumoGutendex implements IConsumoGutendex {
         }
         return respuesta.body();
     }
+
+    @Override
+    public String obtenerLibrosPorIdioma(String idioma) {
+        this.direccionUrl = URI.create(API_URL+"?languages="+idioma);
+
+        HttpRequest solicitud = HttpRequest.newBuilder().uri(this.direccionUrl).build();
+
+        HttpResponse<String> respuesta;
+        try {
+
+            respuesta = httpClient.send(solicitud, HttpResponse.BodyHandlers.ofString());
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        return respuesta.body();
+    }
 }

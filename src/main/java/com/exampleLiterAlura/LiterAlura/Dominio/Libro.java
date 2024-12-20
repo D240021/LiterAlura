@@ -21,7 +21,7 @@ public class Libro {
     private String nombre;
 
     @JsonProperty("authors")
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(
             name = "libro_autor",
             joinColumns = @JoinColumn(name = "libro_id", referencedColumnName = "id"),
@@ -34,6 +34,17 @@ public class Libro {
 
     @JsonProperty("download_count")
     private int numeroDescargas;
+
+    @Version
+    private Integer version = 0;
+
+    public Libro(String nombre,List<String> idiomas, int numeroDescargas) {
+        this.nombre = nombre;
+        this.idiomas = idiomas;
+        this.numeroDescargas = numeroDescargas;
+    }
+
+    public Libro(){}
 
     //Getters, setters y toString abajo
 
@@ -60,6 +71,8 @@ public class Libro {
     public void setAutores(List<Autor> autores) {
         this.autores = autores;
     }
+
+    public void setUnicoAutor(Autor autor){ this.autores.add(autor); }
 
     public List<String> getIdiomas() {
         return idiomas;

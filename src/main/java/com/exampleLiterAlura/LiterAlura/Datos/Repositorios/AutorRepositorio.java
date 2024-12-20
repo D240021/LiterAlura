@@ -11,5 +11,6 @@ public interface AutorRepositorio extends JpaRepository<Autor,Integer> {
     @Query("SELECT au FROM Autor au WHERE :anio >= au.anioNacimiento AND :anio < au.anioFallecimiento")
     public List<Autor> obtenerAutoresVivosEnUnAnio(int anio);
 
+    public boolean existsByNombre(String nombre);
 
 }

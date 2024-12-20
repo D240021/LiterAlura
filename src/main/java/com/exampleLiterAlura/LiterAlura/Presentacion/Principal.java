@@ -28,23 +28,45 @@ public class Principal implements IPrincipal {
     public void mostrarMenu() {
         while (true) {
             var menu = """
-                Bienvenido, usuario! Digite la opción elegida
-                1.Buscar libro por nombre
-                2.Obtener libros registrados
-                3.Obtener autores registrados
-                4.Obtener autores vivos en determinado año
-                5.Obtener libros por idioma
-                6.Salir""";
+                
+                -------------------------------------------------
+                - Bienvenido, usuario! Digite la opción elegida -
+                - 1.Buscar libro por nombre                     -
+                - 2.Obtener libros registrados                  -
+                - 3.Obtener autores registrados                 -
+                - 4.Obtener autores vivos en determinado año    -
+                - 5.Obtener libros por idioma                   -
+                - 6.Salir                                       -
+                -------------------------------------------------
+                """;
 
             System.out.println(menu);
 
-            int opcion = this.scanner.nextInt();
+            int opcion = 0;
+
+            while (true) {
+                try {
+                    System.out.print("Seleccione una opción (1-6): ");
+                    if (scanner.hasNextInt()) {
+                        opcion = scanner.nextInt();
+                        if (opcion >= 1 && opcion <= 6) {
+                            break;
+                        }
+                    }
+                    System.out.println("Por favor, elija una opción válida (1-6).");
+                    scanner.nextLine();
+                } catch (Exception e) {
+                    System.out.println("Entrada inválida. Intente de nuevo.");
+                    scanner.nextLine();
+                }
+            }
 
             if (opcion == 6) {
+                System.out.println("Saliendo del programa...");
                 break;
             }
 
-            this.procesarOpciones(opcion);
+            this.procesarOpcionesMenu(opcion);
         }
     }
 
@@ -52,7 +74,7 @@ public class Principal implements IPrincipal {
         boolean resultadoOperacion = this.libroDA.registrarNuevoLibro(libro);
 
         if (!resultadoOperacion) {
-            System.out.println("El libro no pudo ser registrado");
+            System.out.println("El libro no pudo ser registrado debido a que ya existe");
             return;
         }
         System.out.println("Libro registrado exitosamente");
@@ -65,6 +87,8 @@ public class Principal implements IPrincipal {
             System.out.println("No existen libros registrados");
             return;
         }
+
+        System.out.println("Libros registrados en el sistema: ");
 
         libros.forEach(System.out::println);
     }
@@ -79,40 +103,78 @@ public class Principal implements IPrincipal {
             return;
         }
 
+        System.out.println("Autores registrados en el sistema: ");
+
         autores.forEach(System.out::println);
     }
 
     @Override
     public void obtenerAutoresVivosPorAnio() {
+        int anioBuscado = 0;
 
-        System.out.println("Inserte el año: ");
+        while (true) {
+            try {
+                System.out.println("Inserte el año (entre -1000 y 2024): ");
 
-        int anioBuscado = this.scanner.nextInt();
+                if (scanner.hasNextInt()) {
+                    anioBuscado = scanner.nextInt();
+                    if (anioBuscado >= -1000 && anioBuscado <= 2024) {
+                        break;
+                    }
+                }
+
+                System.out.println("Por favor, inserte un año válido (entre -1000 y 2024).");
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("Entrada inválida. Intente de nuevo.");
+                scanner.nextLine();
+            }
+        }
 
         List<Autor> autores = this.autorDA.obtenerAutoresVivosPorAnio(anioBuscado);
 
-        if (autores.isEmpty()){
-            System.out.println("No existen autores vivos registrados en el año insertado");
+        if (autores.isEmpty()) {
+            System.out.println("No existen autores vivos registrados en el año " + anioBuscado + ".");
             return;
         }
 
+        System.out.println("Autores vivos en el año " + anioBuscado + ":");
         autores.forEach(System.out::println);
     }
 
+
     @Override
     public void obtenerLibrosPorIdioma() {
-        System.out.println("Seleccione el idioma del libro a buscar: \n" +
-                "1.Español\n" +
-                "2.Inglés\n" +
-                "3.Francés");
+        int opcion = 0;
 
-        int opcion = this.scanner.nextInt();
+        while (true) {
+            try {
+                System.out.println("Seleccione el idioma del libro a buscar: \n" +
+                        "1. Español\n" +
+                        "2. Inglés\n" +
+                        "3. Francés");
+
+                if (scanner.hasNextInt()) {
+                    opcion = scanner.nextInt();
+                    if (opcion >= 1 && opcion <= 3) {
+                        break;
+                    }
+                }
+
+                System.out.println("Por favor, seleccione una opción válida entre 1 y 3.");
+                scanner.nextLine();
+            } catch (Exception e) {
+                System.out.println("Entrada inválida. Intente de nuevo.");
+                scanner.nextLine();
+            }
+        }
+
 
         String opcionProcesada = this.procesarOpcionesIdiomas(opcion);
 
         List<Libro> libros = this.libroDA.obtenerLibrosPorIdioma(opcionProcesada);
 
-        if(libros.isEmpty()){
+        if (libros.isEmpty()) {
             System.out.println("No existen libros registrados en el idioma seleccionado");
             return;
         }
@@ -120,7 +182,8 @@ public class Principal implements IPrincipal {
         libros.forEach(System.out::println);
     }
 
-    private void procesarOpciones(int opcion) {
+
+    private void procesarOpcionesMenu(int opcion) {
         switch (opcion) {
             case 1:
                 Libro libro = buscarLibroPorNombre();
@@ -149,6 +212,8 @@ public class Principal implements IPrincipal {
                 return "es";
             case 2:
                 return "en";
+            case 3:
+                return "fr";
         }
         return "";
     }
@@ -161,6 +226,12 @@ public class Principal implements IPrincipal {
         }
 
         String nombreABuscar = scanner.nextLine();
+
+        if (nombreABuscar.isEmpty()) {
+            System.out.println("Debe ingresar un nombre válido.");
+            return null;
+        }
+
         System.out.println("Buscando: " + nombreABuscar);
 
         Libro libroBuscado = this.libroDA.obtenerLibroPorNombre(nombreABuscar);

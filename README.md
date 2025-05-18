@@ -29,7 +29,3 @@ The project enables the management of books and authors, offering features such 
 - **Maven**: Gestión de dependencias y construcción del proyecto  
   **Maven**: Project build and dependency management  
 
-## 📬 Contribuciones | Contributions
-
-¿Tienes ideas, mejoras o encontraste errores? ¡Siéntete libre de contribuir o crear un issue!  
-Got suggestions, improvements, or found bugs? Feel free to contribute or open an issue!
